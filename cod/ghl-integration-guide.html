@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>COD Form → GHL Integration Guide</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #0f1117;
+      color: #e2e8f0;
+      line-height: 1.7;
+      padding: 40px 20px 80px;
+    }
+
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+    }
+
+    /* Header */
+    .header {
+      text-align: center;
+      margin-bottom: 56px;
+    }
+    .badge {
+      display: inline-block;
+      background: #1e293b;
+      border: 1px solid #334155;
+      color: #94a3b8;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      padding: 4px 14px;
+      border-radius: 999px;
+      margin-bottom: 20px;
+    }
+    h1 {
+      font-size: clamp(26px, 5vw, 42px);
+      font-weight: 700;
+      color: #f8fafc;
+      margin-bottom: 14px;
+      line-height: 1.2;
+    }
+    .subtitle {
+      color: #94a3b8;
+      font-size: 17px;
+      max-width: 560px;
+      margin: 0 auto;
+    }
+
+    /* Step card */
+    .step {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 16px;
+      padding: 32px 36px;
+      margin-bottom: 24px;
+      position: relative;
+    }
+    .step-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    .step-num {
+      flex-shrink: 0;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 15px;
+      color: #fff;
+    }
+    .step-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: #f1f5f9;
+    }
+    .step p {
+      color: #94a3b8;
+      margin-bottom: 14px;
+    }
+    .step p:last-child { margin-bottom: 0; }
+
+    /* Field mapping table */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0;
+      font-size: 14px;
+    }
+    thead th {
+      background: #0f1117;
+      color: #64748b;
+      text-align: left;
+      padding: 10px 14px;
+      font-weight: 600;
+      letter-spacing: .04em;
+      font-size: 12px;
+      text-transform: uppercase;
+      border-bottom: 1px solid #334155;
+    }
+    tbody tr {
+      border-bottom: 1px solid #1e293b;
+    }
+    tbody tr:last-child { border-bottom: none; }
+    tbody td {
+      padding: 11px 14px;
+      color: #cbd5e1;
+      background: #0f1117;
+      vertical-align: top;
+    }
+    .native { color: #34d399; font-size: 12px; font-weight: 600; }
+    .custom { color: #a78bfa; font-size: 12px; font-weight: 600; }
+
+    /* Code block */
+    pre {
+      background: #0a0e18;
+      border: 1px solid #1e293b;
+      border-radius: 10px;
+      padding: 20px 22px;
+      overflow-x: auto;
+      font-size: 13px;
+      line-height: 1.7;
+      margin: 16px 0;
+    }
+    code { font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace; }
+    .kw  { color: #c084fc; }
+    .fn  { color: #60a5fa; }
+    .str { color: #86efac; }
+    .cm  { color: #475569; }
+    .var { color: #f8fafc; }
+
+    /* Callout boxes */
+    .callout {
+      border-radius: 10px;
+      padding: 16px 20px;
+      margin: 16px 0;
+      font-size: 14px;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    .callout-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+    .callout.info  { background: #0c1a2e; border: 1px solid #1e40af; color: #93c5fd; }
+    .callout.warn  { background: #1c1304; border: 1px solid #92400e; color: #fcd34d; }
+    .callout.good  { background: #052e16; border: 1px solid #166534; color: #86efac; }
+
+    /* List */
+    ul, ol { padding-left: 22px; }
+    li { color: #94a3b8; margin-bottom: 6px; }
+    li strong { color: #e2e8f0; }
+
+    /* Section divider */
+    .divider {
+      text-align: center;
+      color: #334155;
+      font-size: 22px;
+      margin: 8px 0;
+    }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      margin-top: 60px;
+      color: #475569;
+      font-size: 13px;
+    }
+
+    @media (max-width: 600px) {
+      .step { padding: 24px 20px; }
+      thead th, tbody td { padding: 9px 10px; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="badge">Internal Setup Guide</div>
+    <h1>COD Application Form<br>→ GoHighLevel Integration</h1>
+    <p class="subtitle">How to embed the custom form in a GHL HTML widget and map every field to a GHL contact record.</p>
+  </div>
+
+  <!-- Step 1 -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num">1</div>
+      <div class="step-title">Create Custom Fields in GHL</div>
+    </div>
+    <p>Go to <strong>Settings → Custom Fields → New Field</strong> and create the following. Use the exact <strong>Field Keys</strong> shown — you'll reference them in the JavaScript later.</p>
+    <table>
+      <thead>
+        <tr>
+          <th>Label</th>
+          <th>Suggested Field Key</th>
+          <th>Type</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>COD Work Category</td><td><code>cod_work_category</code></td><td>Text / Dropdown</td></tr>
+        <tr><td>COD Professional Role</td><td><code>cod_professional_role</code></td><td>Text / Dropdown</td></tr>
+        <tr><td>COD Service Description</td><td><code>cod_service_description</code></td><td>Text Area</td></tr>
+        <tr><td>COD Decision Maker</td><td><code>cod_decision_maker</code></td><td>Text / Dropdown</td></tr>
+        <tr><td>COD SMS Consent</td><td><code>cod_sms_consent</code></td><td>Checkbox / Text</td></tr>
+        <tr><td>COD Appointment Date</td><td><code>cod_appointment_date</code></td><td>Date</td></tr>
+        <tr><td>COD Appointment Time</td><td><code>cod_appointment_time</code></td><td>Text</td></tr>
+      </tbody>
+    </table>
+    <div class="callout info">
+      <span class="callout-icon">ℹ</span>
+      <span>GHL auto-generates field keys from the label. Double-check the exact key in the field settings — copy it exactly for Step 3.</span>
+    </div>
+  </div>
+
+  <div class="divider">↓</div>
+
+  <!-- Step 2 -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num">2</div>
+      <div class="step-title">Create a Workflow with an Inbound Webhook Trigger</div>
+    </div>
+    <p>This workflow receives the form data and creates or updates a GHL contact automatically.</p>
+    <ol>
+      <li>Go to <strong>Automation → Workflows → + New Workflow</strong></li>
+      <li>Set the trigger to <strong>Inbound Webhook</strong></li>
+      <li>GHL will generate a unique webhook URL — <strong>copy this URL</strong>, you'll need it in Step 3</li>
+      <li>Add action: <strong>Create / Update Contact</strong></li>
+      <li>Map the incoming webhook fields to contact fields:<br>
+        <ul style="margin-top:8px">
+          <li><code>firstName</code> → First Name</li>
+          <li><code>lastName</code> → Last Name</li>
+          <li><code>email</code> → Email</li>
+          <li><code>phone</code> → Phone</li>
+          <li><code>customField.cod_work_category</code> → COD Work Category</li>
+          <li><code>customField.cod_professional_role</code> → COD Professional Role</li>
+          <li><code>customField.cod_service_description</code> → COD Service Description</li>
+          <li><code>customField.cod_decision_maker</code> → COD Decision Maker</li>
+          <li><code>customField.cod_sms_consent</code> → COD SMS Consent</li>
+          <li><code>customField.cod_appointment_date</code> → COD Appointment Date</li>
+          <li><code>customField.cod_appointment_time</code> → COD Appointment Time</li>
+        </ul>
+      </li>
+      <li>Optionally: add a tag (e.g., <strong>COD-Applicant</strong>), send a confirmation email, or add to a pipeline stage</li>
+      <li><strong>Publish</strong> the workflow</li>
+    </ol>
+  </div>
+
+  <div class="divider">↓</div>
+
+  <!-- Step 3 -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num">3</div>
+      <div class="step-title">Add the Submit Handler to the Form HTML</div>
+    </div>
+    <p>Find the section in the form's JavaScript that handles the final confirmation step. Add this function and call it before showing the confirmation screen.</p>
+    <p>Replace <code>YOUR_WEBHOOK_URL</code> with the URL from Step 2.</p>
+    <pre><code><span class="cm">// --- GHL Submission Handler ---</span>
+<span class="kw">const</span> <span class="var">GHL_WEBHOOK_URL</span> = <span class="str">'YOUR_WEBHOOK_URL_HERE'</span>;
+
+<span class="kw">async function</span> <span class="fn">submitToGHL</span>(<span class="var">formData</span>) {
+  <span class="kw">const</span> <span class="var">nameParts</span> = (<span class="var">formData</span>.full_name || <span class="str">''</span>).trim().split(<span class="str">' '</span>);
+  <span class="kw">const</span> <span class="var">payload</span> = {
+    <span class="cm">// Native GHL contact fields</span>
+    firstName:  <span class="var">nameParts</span>[<span class="var">0</span>] || <span class="str">''</span>,
+    lastName:   <span class="var">nameParts</span>.slice(<span class="var">1</span>).join(<span class="str">' '</span>) || <span class="str">''</span>,
+    email:      <span class="var">formData</span>.email,
+    phone:      <span class="var">formData</span>.phone || <span class="str">''</span>,
+
+    <span class="cm">// Custom fields — keys must match exactly what's in GHL</span>
+    customField: {
+      cod_work_category:      <span class="var">formData</span>.work_category,
+      cod_professional_role:  <span class="var">formData</span>.professional_role,
+      cod_service_description:<span class="var">formData</span>.service_description,
+      cod_decision_maker:     <span class="var">formData</span>.decision_maker,
+      cod_sms_consent:        <span class="var">formData</span>.sms_consent ? <span class="str">'Yes'</span> : <span class="str">'No'</span>,
+      cod_appointment_date:   <span class="var">formData</span>.appointment_date,
+      cod_appointment_time:   <span class="var">formData</span>.appointment_time,
+    }
+  };
+
+  <span class="kw">try</span> {
+    <span class="kw">await</span> <span class="fn">fetch</span>(<span class="var">GHL_WEBHOOK_URL</span>, {
+      method:  <span class="str">'POST'</span>,
+      headers: { <span class="str">'Content-Type'</span>: <span class="str">'application/json'</span> },
+      body:    JSON.<span class="fn">stringify</span>(<span class="var">payload</span>)
+    });
+  } <span class="kw">catch</span> (err) {
+    console.<span class="fn">error</span>(<span class="str">'GHL submission failed:'</span>, err);
+  }
+}
+
+<span class="cm">// Call this on the final step, e.g.:</span>
+<span class="cm">// await submitToGHL(collectedFormData);</span>
+<span class="cm">// showConfirmationScreen();</span></code></pre>
+
+    <div class="callout warn">
+      <span class="callout-icon">⚠</span>
+      <span>Make sure <code>collectedFormData</code> is the object you're building across all form steps — the keys above must match what you're storing in your form state.</span>
+    </div>
+  </div>
+
+  <div class="divider">↓</div>
+
+  <!-- Step 4 -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num">4</div>
+      <div class="step-title">Paste into GHL HTML Widget</div>
+    </div>
+    <p>Once the webhook URL is wired in and tested locally:</p>
+    <ol>
+      <li>Open your GHL Funnel or Website page editor</li>
+      <li>Add a <strong>Custom Code / HTML widget</strong> to the page</li>
+      <li>Paste the complete form HTML (including <code>&lt;style&gt;</code> and <code>&lt;script&gt;</code> tags) into the widget</li>
+      <li>Save and preview — the form should render and submit exactly as designed</li>
+    </ol>
+    <div class="callout good">
+      <span class="callout-icon">✓</span>
+      <span>GHL webhooks accept cross-origin requests, so no CORS issues — the fetch call works directly from the browser without a backend.</span>
+    </div>
+  </div>
+
+  <div class="divider">↓</div>
+
+  <!-- Step 5 -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num">5</div>
+      <div class="step-title">Field Mapping Reference</div>
+    </div>
+    <p>Full reference of every form field and how it maps in GHL.</p>
+    <table>
+      <thead>
+        <tr>
+          <th>Form Field</th>
+          <th>Input Type</th>
+          <th>GHL Field</th>
+          <th>Field Type</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>full_name</code></td>
+          <td>Text</td>
+          <td>First Name + Last Name</td>
+          <td><span class="native">NATIVE</span></td>
+        </tr>
+        <tr>
+          <td><code>email</code></td>
+          <td>Email</td>
+          <td>Email</td>
+          <td><span class="native">NATIVE</span></td>
+        </tr>
+        <tr>
+          <td><code>phone</code></td>
+          <td>Tel</td>
+          <td>Phone</td>
+          <td><span class="native">NATIVE</span></td>
+        </tr>
+        <tr>
+          <td><code>work_category</code></td>
+          <td>Radio</td>
+          <td>COD Work Category</td>
+          <td><span class="custom">CUSTOM</span></td>
+        </tr>
+        <tr>
+          <td><code>professional_role</code></td>
+          <td>Radio</td>
+          <td>COD Professional Role</td>
+          <td><span class="custom">CUSTOM</span></td>
+        </tr>
+        <tr>
+          <td><code>service_description</code></td>
+          <td>Textarea</td>
+          <td>COD Service Description</td>
+          <td><span class="custom">CUSTOM</span></td>
+        </tr>
+        <tr>
+          <td><code>decision_maker</code></td>
+          <td>Radio</td>
+          <td>COD Decision Maker</td>
+          <td><span class="custom">CUSTOM</span></td>
+        </tr>
+        <tr>
+          <td><code>sms_consent</code></td>
+          <td>Checkbox</td>
+          <td>COD SMS Consent</td>
+          <td><span class="custom">CUSTOM</span></td>
+        </tr>
+        <tr>
+          <td><code>appointment_date</code></td>
+          <td>Date picker</td>
+          <td>COD Appointment Date</td>
+          <td><span class="custom">CUSTOM</span></td>
+        </tr>
+        <tr>
+          <td><code>appointment_time</code></td>
+          <td>Time picker</td>
+          <td>COD Appointment Time</td>
+          <td><span class="custom">CUSTOM</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    Prepared for Clients on Demand · April 2026
+  </div>
+
+</div>
+</body>
+</html>
