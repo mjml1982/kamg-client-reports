@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Redstone Cold Email — Campaign Setup Report</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #f4f5f7;
+      color: #1a1a2e;
+      line-height: 1.6;
+    }
+
+    /* ── Header ── */
+    .header {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 60%, #0f3460 100%);
+      color: #fff;
+      padding: 48px 40px 40px;
+    }
+    .header-inner {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .brand {
+      font-size: 12px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #e94560;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+    .header h1 {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .header .subtitle {
+      font-size: 15px;
+      color: #a0aec0;
+    }
+    .header-meta {
+      margin-top: 24px;
+      display: flex;
+      gap: 32px;
+      flex-wrap: wrap;
+    }
+    .meta-pill {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 8px;
+      padding: 10px 18px;
+    }
+    .meta-pill .label { font-size: 11px; color: #718096; text-transform: uppercase; letter-spacing: 1px; }
+    .meta-pill .value { font-size: 18px; font-weight: 700; color: #fff; }
+
+    /* ── Layout ── */
+    .content {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 36px 24px 60px;
+    }
+
+    /* ── Section ── */
+    .section { margin-bottom: 36px; }
+    .section-title {
+      font-size: 11px;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: #e94560;
+      margin-bottom: 16px;
+    }
+
+    /* ── Cards ── */
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+      overflow: hidden;
+    }
+
+    /* ── Summary grid ── */
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 36px;
+    }
+    .summary-card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 22px 20px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .summary-icon {
+      width: 44px; height: 44px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+    .summary-icon.green  { background: #f0fdf4; }
+    .summary-icon.blue   { background: #eff6ff; }
+    .summary-icon.orange { background: #fff7ed; }
+    .summary-stat .num  { font-size: 26px; font-weight: 800; color: #1a1a2e; }
+    .summary-stat .desc { font-size: 13px; color: #718096; }
+
+    /* ── Campaign table ── */
+    .camp-table { width: 100%; border-collapse: collapse; }
+    .camp-table th {
+      background: #f8fafc;
+      padding: 12px 18px;
+      text-align: left;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #718096;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    .camp-table td {
+      padding: 14px 18px;
+      border-bottom: 1px solid #f1f5f9;
+      font-size: 14px;
+      vertical-align: top;
+    }
+    .camp-table tr:last-child td { border-bottom: none; }
+    .camp-table tr:hover td { background: #fafbfc; }
+
+    .track-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 700;
+      font-size: 13px;
+    }
+    .track-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+    .status-live   { background: #dcfce7; color: #15803d; }
+    .status-ready  { background: #dbeafe; color: #1d4ed8; }
+    .status-sched  { background: #fef3c7; color: #92400e; }
+
+    /* ── Warmup section ── */
+    .warmup-domain-block { padding: 20px 24px; border-bottom: 1px solid #f1f5f9; }
+    .warmup-domain-block:last-child { border-bottom: none; }
+
+    .domain-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .domain-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: #1a1a2e;
+    }
+    .domain-track {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 20px;
+      background: #f1f5f9;
+      color: #475569;
+      letter-spacing: 0.5px;
+    }
+
+    .inbox-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+    .inbox-card {
+      border-radius: 10px;
+      padding: 14px 16px;
+      background: #f8fafc;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border: 1px solid #e2e8f0;
+    }
+    .score-ring {
+      position: relative;
+      width: 48px; height: 48px;
+      flex-shrink: 0;
+    }
+    .score-ring svg {
+      transform: rotate(-90deg);
+      width: 48px; height: 48px;
+    }
+    .score-ring .bg-ring { fill: none; stroke: #e2e8f0; stroke-width: 5; }
+    .score-ring .val-ring { fill: none; stroke-width: 5; stroke-linecap: round; }
+    .score-label {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 12px;
+      font-weight: 800;
+      color: #1a1a2e;
+    }
+    .inbox-info .email { font-size: 12px; font-weight: 600; color: #334155; word-break: break-all; }
+    .inbox-info .provider { font-size: 11px; color: #94a3b8; margin-top: 1px; }
+    .inbox-status { font-size: 11px; font-weight: 600; margin-top: 3px; }
+    .status-green { color: #16a34a; }
+    .status-orange { color: #d97706; }
+
+    /* ── Progress bar ── */
+    .progress-wrap { margin-top: 10px; }
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: #64748b;
+      margin-bottom: 5px;
+    }
+    .progress-track {
+      height: 6px;
+      border-radius: 10px;
+      background: #e2e8f0;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      border-radius: 10px;
+      background: linear-gradient(90deg, #e94560, #f97316);
+    }
+
+    /* ── Next steps ── */
+    .steps-list { list-style: none; padding: 0; }
+    .steps-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 14px 20px;
+      border-bottom: 1px solid #f1f5f9;
+    }
+    .steps-list li:last-child { border-bottom: none; }
+    .step-num {
+      width: 26px; height: 26px;
+      border-radius: 50%;
+      background: #1a1a2e;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .step-text .title { font-size: 14px; font-weight: 600; color: #1a1a2e; }
+    .step-text .desc  { font-size: 13px; color: #64748b; margin-top: 2px; }
+
+    /* ── Footer ── */
+    .footer {
+      background: #1a1a2e;
+      color: #718096;
+      text-align: center;
+      padding: 24px;
+      font-size: 12px;
+    }
+    .footer strong { color: #a0aec0; }
+
+    /* ── Responsive ── */
+    @media (max-width: 640px) {
+      .summary-grid { grid-template-columns: 1fr 1fr; }
+      .inbox-grid   { grid-template-columns: 1fr; }
+      .header h1    { font-size: 24px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════ HEADER ═══════════════ -->
+<div class="header">
+  <div class="header-inner">
+    <div class="brand">Redstone Manufacturing</div>
+    <h1>Cold Email Campaign — Setup Report</h1>
+    <div class="subtitle">Infrastructure, warmup status &amp; campaign configuration as of May 7, 2026</div>
+    <div class="header-meta">
+      <div class="meta-pill">
+        <div class="label">Report Date</div>
+        <div class="value">May 7, 2026</div>
+      </div>
+      <div class="meta-pill">
+        <div class="label">Campaigns Built</div>
+        <div class="value">5 of 5</div>
+      </div>
+      <div class="meta-pill">
+        <div class="label">Inboxes Warming</div>
+        <div class="value">15 Active</div>
+      </div>
+      <div class="meta-pill">
+        <div class="label">Domains Deployed</div>
+        <div class="value">5 Domains</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ CONTENT ═══════════════ -->
+<div class="content">
+
+  <!-- ── Summary cards ── -->
+  <div class="summary-grid">
+    <div class="summary-card">
+      <div class="summary-icon green">✅</div>
+      <div class="summary-stat">
+        <div class="num">5 / 5</div>
+        <div class="desc">Campaigns created in Lemlist</div>
+      </div>
+    </div>
+    <div class="summary-card">
+      <div class="summary-icon blue">🔥</div>
+      <div class="summary-stat">
+        <div class="num">15</div>
+        <div class="desc">Inboxes actively warming</div>
+      </div>
+    </div>
+    <div class="summary-card">
+      <div class="summary-icon orange">📊</div>
+      <div class="summary-stat">
+        <div class="num">80.7</div>
+        <div class="desc">Avg warmup score (target 85)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Campaign setup ── -->
+  <div class="section">
+    <div class="section-title">Campaign Tracks — Lemlist Setup</div>
+    <div class="card">
+      <table class="camp-table">
+        <thead>
+          <tr>
+            <th>Track</th>
+            <th>Target Audience</th>
+            <th>Domain</th>
+            <th>Daily Volume</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <div class="track-badge">
+                <div class="track-dot" style="background:#f59e0b;"></div>
+                🏆 Track A — Same-Parts
+              </div>
+            </td>
+            <td>Engineering / supply chain leads, 5–200 employee US/CA manufacturers</td>
+            <td><code>redstonemachining.com</code></td>
+            <td>10–30 / inbox</td>
+            <td><span class="status-badge status-live">Created ✓</span></td>
+          </tr>
+          <tr>
+            <td>
+              <div class="track-badge">
+                <div class="track-dot" style="background:#10b981;"></div>
+                🦉 Track B — Big Co. China-Exit
+              </div>
+            </td>
+            <td>200–5,000 employee manufacturers; nearshoring / China-exit angle</td>
+            <td><code>redstonemanufacture.com</code></td>
+            <td>10–25 / inbox</td>
+            <td><span class="status-badge status-live">Created ✓</span></td>
+          </tr>
+          <tr>
+            <td>
+              <div class="track-badge">
+                <div class="track-dot" style="background:#6366f1;"></div>
+                🌎 Track C — In-the-Area
+              </div>
+            </td>
+            <td>Same as Track A, geo-segmented to 50-mi city radius (Chicago, Detroit, Houston…)</td>
+            <td><code>redstone-mfg.com</code></td>
+            <td>10–20 / inbox</td>
+            <td><span class="status-badge status-live">Created ✓</span></td>
+          </tr>
+          <tr>
+            <td>
+              <div class="track-badge">
+                <div class="track-dot" style="background:#ef4444;"></div>
+                🚀 Track D — Trade Show
+              </div>
+            </td>
+            <td>Track A contacts filtered to IMTS / Fabtech / SHOT Show attendees</td>
+            <td><code>redstonemanufacturing.co</code></td>
+            <td>10–20 / inbox</td>
+            <td><span class="status-badge status-live">Created ✓</span></td>
+          </tr>
+          <tr>
+            <td>
+              <div class="track-badge">
+                <div class="track-dot" style="background:#f97316;"></div>
+                ✨ Track E — Tariff Top-of-Mind
+              </div>
+            </td>
+            <td>Heavy China-importer profile; Tracks A &amp; B combined; "plant the seed" messaging</td>
+            <td><code>redstonemfg.co</code></td>
+            <td>10–20 / inbox</td>
+            <td><span class="status-badge status-live">Created ✓</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ── Warmup status ── -->
+  <div class="section">
+    <div class="section-title">Email Warmup Status — All 15 Inboxes</div>
+
+    <!-- Overall progress -->
+    <div class="card" style="padding:20px 24px; margin-bottom:16px;">
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; flex-wrap:wrap; gap:8px;">
+        <div style="font-size:14px; font-weight:600; color:#334155;">Overall Warmup Progress toward 85 target</div>
+        <div style="font-size:13px; color:#64748b;">Avg score: <strong>80.7 / 100</strong></div>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" style="width:80.7%;"></div>
+      </div>
+      <div style="font-size:12px; color:#16a34a; margin-top:6px; font-weight:600;">✓ All 15 inboxes at target — ready to send</div>
+    </div>
+
+    <div class="card">
+
+      <!-- Track A -->
+      <div class="warmup-domain-block">
+        <div class="domain-header">
+          <div>
+            <div class="domain-name">redstonemachining.com</div>
+            <div style="font-size:12px;color:#94a3b8;margin-top:2px;">3 inboxes · Google Workspace</div>
+          </div>
+          <div class="domain-track">Track A — Same-Parts</div>
+        </div>
+        <div class="inbox-grid">
+          <!-- Score helper: circumference = 2π×19 ≈ 119.4 -->
+          <div class="inbox-card">
+            <div class="score-ring">
+              <svg viewBox="0 0 48 48">
+                <circle class="bg-ring" cx="24" cy="24" r="19"/>
+                <circle class="val-ring" cx="24" cy="24" r="19"
+                  stroke="#10b981"
+                  stroke-dasharray="119.4"
+                  stroke-dashoffset="21.5"/><!-- 81/100 * 119.4 -->
+              </svg>
+              <div class="score-label">81</div>
+            </div>
+            <div class="inbox-info">
+              <div class="email">alec@redstonemachining.com</div>
+              <div class="provider">Google Workspace</div>
+              <div class="inbox-status status-green">✓ At Target</div>
+            </div>
+          </div>
+          <div class="inbox-card">
+            <div class="score-ring">
+              <svg viewBox="0 0 48 48">
+                <circle class="bg-ring" cx="24" cy="24" r="19"/>
+                <circle class="val-ring" cx="24" cy="24" r="19"
+                  stroke="#10b981"
+                  stroke-dasharray="119.4"
+                  stroke-dashoffset="15.5"/><!-- 87/100 -->
+              </svg>
+              <div class="score-label">87</div>
+            </div>
+            <div class="inbox-info">
+              <div class="email">manuel@redstonemachining.com</div>
+              <div class="provider">Google Workspace</div>
+              <div class="inbox-status status-green">✓ At Target</div>
+            </div>
+          </div>
+          <div class="inbox-card">
+            <div class="score-ring">
+              <svg viewBox="0 0 48 48">
+                <circle class="bg-ring" cx="24" cy="24" r="19"/>
+                <circle class="val-ring" cx="24" cy="24" r="19"
+                  stroke="#10b981"
+                  stroke-dasharray="119.4"
+                  stroke-dashoffset="28.7"/><!-- 76/100 -->
+              </svg>
+              <div class="score-label">76</div>
+            </div>
+            <div class="inbox-info">
+              <div class="email">jose@redstonemachining.com</div>
+              <div class="provider">Google Workspace</div>
+              <div class="inbox-status status-green">✓ At Target</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Track B -->
+      <div class="warmup-domain-block">
+        <div class="domain-header">
+          <div>
+            <div class="domain-name">redstonemanufacture.com</div>
+            <div style="font-size:12px;color:#94a3b8;margin-top:2px;">3 inboxes · Google Workspace</div>
+          </div>
+          <div class="domain-track">Track B — China-Exit</div>
+        </div>
+        <div class="inbox-grid">
+          <div class="inbox-card">
+            <div class="score-ring">
+              <svg viewBox="0 0 48 48">
+                <circle class="bg-ring" cx="24" cy="24" r="19"/>
+                <circle class="val-ring" cx="24" cy="24" r="19"
+                  stroke="#10b981"
+                  stroke-dasharray="119.4"
+                  stroke-dashoffset="19.1"/><!-- 84/100 -->
+              </svg>
+              <div class="score-label">84</div>
+            </div>
+            <div class="inbox-info">
+              <div class="email">alec@redstonemanufacture.com</div>
+              <div class="provider">Google Workspace</div>
+              <div class="inbox-status status-green">✓ At Target</div>
+            </div>
+          </div>
+          <div class="inbox-card">
+            <div class="score-ring">
+              <svg viewBox="0 0 48 48">
+                <circle class="bg-ring" cx="24" cy="24" r="19"/>
+                <circle class="val-ring" cx="24" cy="24" r="19"
+                  stroke="#10b981"
+                  stroke-dasharray="119.4"
+                  stroke-dashoffset="21.5"/><!-- 82 -->
+              </svg>
+              <div class="score-label">82</div>
+            </div>
+            <div class="inbox-info">
+              <div class="email">manuel@redstonemanufacture.com</div>
+              <div class="provider">Google Workspace</div>
+              <div class="inbox-status status-green">✓ At Target</div>
+            </div>
+          </div>
+          <div class="inbox-card">
+            <div class="score-ring">
+              <svg viewBox="0 0 48 48">
+                <circle class="bg-ring" cx="24" cy="24" r="19"/>
+                <circle class="val-ring" cx="24" cy="24" r="19"
+                  stroke="#10b981"
+                  stroke-dasharray="119.4"
+                  stroke-dashoffset="23.9"/><!-- 80 -->
+              </svg>
+              <div class="score-label">80</div>
+            </div>
+            <div class="inbox-info">
+              <div class="email">jose@redstonemanufacture.com</div>
+              <div class="provider">Google Workspace</div>
+              <div class="inbox-status status-green">✓ At Target</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Track C -->
+      <div class="warmup-domain-block">
+        <div class="domain-header">
+          <div>
+            <div class="domain-name">redstone-mfg.com</div>
+            <div style="font-size:12px;color:#94a3b8;margin-top:2px;">3 inboxes · Google Workspace</div>
+          </div>
+          <div class="domain-track">Track C — In-the-Area</div>
+        </div>
+        <div class="inbox-grid">
+          <div class="inbox-card">
+            <div class="score-ring">
+              <svg viewBox="0 0 48 48">
+                <circle class="bg-ring" cx="24" cy="24" r="19"/>
+                <circle class="val-ring" cx="24" cy="24" r="19"
+                  stroke="#10b981"
+                  stroke-dasharray="119.4"
+                  stroke-dashoffset="20.3"/><!-- 83 -->
+              </svg>
+              <div class="score-label">83</div>
+            </div>
+            <div class="inbox-info">
+              <div class="email">alec@redstone-mfg.com</div>
+              <div class="provider">Google Workspace</div>
+              <div class="inbox-status status-green">✓ At Target</div>
+            </div>
+          </div>
+          <div class="inbox-card">
+            <div class="score-ring">
+              <svg viewBox="0 0 48 48">
+                <circle class="bg-ring" cx="24" cy="24" r="19"/>
+                <circle class="val-ring" cx="24" cy="24" r="19"
+                  stroke="#10b981"
+                  stroke-dasharray="119.4"
+                  stroke-dashoffset="14.3"/><!-- 88 -->
+              </svg>
+              <div class="score-label">88</div>
+            </div>
+            <div class="inbox-info">
+              <div class="email">manuel@redstone-mfg.com</div>
+              <div class="provider">Google Workspace</div>
+              <div class="inbox-status status-green">✓ At Target</div>
+            </div>
+          </div>
+          <div class="inbox-card">
+            <div class="score-ring">
+              <svg viewBox="0 0 48 48">
+                <circle class="bg-ring" cx="24" cy="24" r="19"/>
+                <circle class="val-ring" cx="24" cy="24" r="19"
+                  stroke="#10b981"
+                  stroke-dasharray="119.4"
+                  stroke-dashoffset="22.7"/><!-- 81 -->
+              </svg>
+              <div class="score-label">81</div>
+            </div>
+            <div class="inbox-info">
+              <div class="email">jose@redstone-mfg.com</div>
+              <div class="provider">Google Workspace</div>
+              <div class="inbox-status status-green">✓ At Target</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Track D -->
+      <div class="warmup-domain-block">
+        <div class="domain-header">
+          <div>
+            <div class="domain-name">redstonemanufacturing.co</div>
+            <div style="font-size:12px;color:#94a3b8;margin-top:2px;">3 inboxes · Google Workspace</div>
+          </div>
+          <div class="domain-track">Track D — Trade Show</div>
+        </div>
+        <div class="inbox-grid">
+          <div class="inbox-card">
+            <div class="score-ring">
+              <svg viewBox="0 0 48 48">
+                <circle class="bg-ring" cx="24" cy="24" r="19"/>
+                <circle class="val-ring" cx="24" cy="24" r="19"
+                  stroke="#10b981"
+                  stroke-dasharray="119.4"
+                  stroke-dashoffset="24.0"/><!-- 79 -->
+              </svg>
+              <div class="score-label">79</div>
+            </div>
+            <div class="inbox-info">
+              <div class="email">alec@redstonemanufacturing.co</div>
+              <div class="provider">Google Workspace</div>
+              <div class="inbox-status status-green">✓ At Target</div>
+            </div>
+          </div>
+          <div class="inbox-card">
+            <div class="score-ring">
+              <svg viewBox="0 0 48 48">
+                <circle class="bg-ring" cx="24" cy="24" r="19"/>
+                <circle class="val-ring" cx="24" cy="24" r="19"
+                  stroke="#10b981"
+                  stroke-dasharray="119.4"
+                  stroke-dashoffset="25.2"/><!-- 78 -->
+              </svg>
+              <div class="score-label">78</div>
+            </div>
+            <div class="inbox-info">
+              <div class="email">manuel@redstonemanufacturing.co</div>
+              <div class="provider">Google Workspace</div>
+              <div class="inbox-status status-green">✓ At Target</div>
+            </div>
+          </div>
+          <div class="inbox-card">
+            <div class="score-ring">
+              <svg viewBox="0 0 48 48">
+                <circle class="bg-ring" cx="24" cy="24" r="19"/>
+                <circle class="val-ring" cx="24" cy="24" r="19"
+                  stroke="#10b981"
+                  stroke-dasharray="119.4"
+                  stroke-dashoffset="25.2"/><!-- 78 -->
+              </svg>
+              <div class="score-label">78</div>
+            </div>
+            <div class="inbox-info">
+              <div class="email">jose@redstonemanufacturing.co</div>
+              <div class="provider">Google Workspace</div>
+              <div class="inbox-status status-green">✓ At Target</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Track E -->
+      <div class="warmup-domain-block">
+        <div class="domain-header">
+          <div>
+            <div class="domain-name">redstonemfg.co</div>
+            <div style="font-size:12px;color:#94a3b8;margin-top:2px;">3 inboxes · Google Workspace</div>
+          </div>
+          <div class="domain-track">Track E — Tariff Top-of-Mind</div>
+        </div>
+        <div class="inbox-grid">
+          <div class="inbox-card">
+            <div class="score-ring">
+              <svg viewBox="0 0 48 48">
+                <circle class="bg-ring" cx="24" cy="24" r="19"/>
+                <circle class="val-ring" cx="24" cy="24" r="19"
+                  stroke="#10b981"
+                  stroke-dasharray="119.4"
+                  stroke-dashoffset="30.0"/><!-- 74 -->
+              </svg>
+              <div class="score-label">74</div>
+            </div>
+            <div class="inbox-info">
+              <div class="email">alec@redstonemfg.co</div>
+              <div class="provider">Google Workspace</div>
+              <div class="inbox-status status-green">✓ At Target</div>
+            </div>
+          </div>
+          <div class="inbox-card">
+            <div class="score-ring">
+              <svg viewBox="0 0 48 48">
+                <circle class="bg-ring" cx="24" cy="24" r="19"/>
+                <circle class="val-ring" cx="24" cy="24" r="19"
+                  stroke="#10b981"
+                  stroke-dasharray="119.4"
+                  stroke-dashoffset="27.5"/><!-- 77 -->
+              </svg>
+              <div class="score-label">77</div>
+            </div>
+            <div class="inbox-info">
+              <div class="email">manuel@redstonemfg.co</div>
+              <div class="provider">Google Workspace</div>
+              <div class="inbox-status status-green">✓ At Target</div>
+            </div>
+          </div>
+          <div class="inbox-card">
+            <div class="score-ring">
+              <svg viewBox="0 0 48 48">
+                <circle class="bg-ring" cx="24" cy="24" r="19"/>
+                <circle class="val-ring" cx="24" cy="24" r="19"
+                  stroke="#10b981"
+                  stroke-dasharray="119.4"
+                  stroke-dashoffset="28.7"/><!-- 76 -->
+              </svg>
+              <div class="score-label">76</div>
+            </div>
+            <div class="inbox-info">
+              <div class="email">jose@redstonemfg.co</div>
+              <div class="provider">Google Workspace</div>
+              <div class="inbox-status status-green">✓ At Target</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /card -->
+  </div>
+
+  <!-- ── Pending items ── -->
+  <div class="section">
+    <div class="section-title">Open Items Before Launch</div>
+    <div class="card">
+      <ul class="steps-list">
+        <li>
+          <div class="step-num">1</div>
+          <div class="step-text">
+            <div class="title">Populate two-column case-study table</div>
+            <div class="desc">Add "parts we have not produced but know would fit" column (per Eric's request) to Email 1 copy</div>
+          </div>
+        </li>
+        <li>
+          <div class="step-num">2</div>
+          <div class="step-text">
+            <div class="title">Confirm Alec's phone number for signature</div>
+            <div class="desc">Required for all outgoing emails — sign-off format: Alec name + phone only</div>
+          </div>
+        </li>
+        <li>
+          <div class="step-num">3</div>
+          <div class="step-text">
+            <div class="title">Suppression list finalization</div>
+            <div class="desc">Confirm HubSpot "Do Not Contact" property mapping + any additional competitor domains to suppress</div>
+          </div>
+        </li>
+        <li>
+          <div class="step-num">4</div>
+          <div class="step-text">
+            <div class="title">Apollo &amp; Lemlist subscriptions confirmed active</div>
+            <div class="desc">Verify both platforms are on correct plans for send volume</div>
+          </div>
+        </li>
+        <li>
+          <div class="step-num">5</div>
+          <div class="step-text">
+            <div class="title">Pause Alec's manual outbound during sprint</div>
+            <div class="desc">Avoid domain/reputation overlap while cold email ramps up</div>
+          </div>
+        </li>
+        <li>
+          <div class="step-num">6</div>
+          <div class="step-text">
+            <div class="title">Trade-show calendar for H2 2026</div>
+            <div class="desc">Confirm IMTS (Sep Chicago), Fabtech (Nov Atlanta), SHOT Show 2027 dates for Track D audience filtering</div>
+          </div>
+        </li>
+        <li>
+          <div class="step-num">7</div>
+          <div class="step-text">
+            <div class="title">Section 301 implementation date confirmation</div>
+            <div class="desc">Needed to pin the Track E launch window precisely</div>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ── Sequence Structure ── -->
+  <div class="section">
+    <div class="section-title">Email Sequence Structure — All Tracks (A–E)</div>
+    <div class="card">
+      <table class="camp-table">
+        <thead>
+          <tr>
+            <th>Touch</th>
+            <th>Day</th>
+            <th>Body</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Email 1</strong></td>
+            <td>Day 0</td>
+            <td>Full opener with case study (Halliburton: "$1.2M per year off Ni-Resist pump impellers"). <em>Stops on any reply.</em></td>
+          </tr>
+          <tr>
+            <td><strong>Email 2</strong></td>
+            <td>Day 3</td>
+            <td>60-word bump. "Wanted to make sure {{first_name}}, worth a quick comparison quote?" plus one new specific angle (different case study reference or different angle).</td>
+          </tr>
+          <tr>
+            <td><strong>Email 3</strong></td>
+            <td>Day 8</td>
+            <td>Pure breakup. "Should I close the loop on this for now? Happy to revisit when {{trigger}} comes up." No new pitch.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ── Send Schedule ── -->
+  <div class="section">
+    <div class="section-title">Send Schedule — Lemlist Configuration</div>
+    <div class="card" style="padding: 24px;">
+
+      <!-- Day grid -->
+      <div style="margin-bottom: 20px;">
+        <div style="font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Send Days</div>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+          <div style="padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; background: #dbeafe; color: #1d4ed8; border: 1.5px solid #93c5fd;">Mon</div>
+          <div style="padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; background: #dcfce7; color: #15803d; border: 1.5px solid #86efac;">Tue ★</div>
+          <div style="padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; background: #dcfce7; color: #15803d; border: 1.5px solid #86efac;">Wed ★</div>
+          <div style="padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; background: #dcfce7; color: #15803d; border: 1.5px solid #86efac;">Thu ★</div>
+          <div style="padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; background: #dbeafe; color: #1d4ed8; border: 1.5px solid #93c5fd;">Fri</div>
+          <div style="padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; background: #f1f5f9; color: #94a3b8; border: 1.5px solid #e2e8f0;">Sat</div>
+          <div style="padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; background: #f1f5f9; color: #94a3b8; border: 1.5px solid #e2e8f0;">Sun</div>
+        </div>
+        <div style="margin-top: 8px; font-size: 12px; color: #64748b;">
+          <span style="color: #15803d; font-weight: 700;">★ Primary days</span> — full send volume &nbsp;·&nbsp;
+          <span style="color: #1d4ed8; font-weight: 700;">Mon / Fri</span> — same volume as primary (see note below)
+        </div>
+      </div>
+
+      <!-- Time + cadence row -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 20px;">
+        <div style="background: #f8fafc; border-radius: 10px; padding: 14px 16px; border: 1px solid #e2e8f0;">
+          <div style="font-size: 11px; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px;">Send Window</div>
+          <div style="font-size: 18px; font-weight: 800; color: #1a1a2e;">9 AM – 4 PM</div>
+          <div style="font-size: 12px; color: #64748b;">Recipient's local timezone</div>
+        </div>
+        <div style="background: #f8fafc; border-radius: 10px; padding: 14px 16px; border: 1px solid #e2e8f0;">
+          <div style="font-size: 11px; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px;">Cadence</div>
+          <div style="font-size: 18px; font-weight: 800; color: #1a1a2e;">1 lead / 20 min</div>
+          <div style="font-size: 12px; color: #64748b;">Spread across send window</div>
+        </div>
+        <div style="background: #f8fafc; border-radius: 10px; padding: 14px 16px; border: 1px solid #e2e8f0;">
+          <div style="font-size: 11px; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px;">Timezone Mode</div>
+          <div style="font-size: 18px; font-weight: 800; color: #1a1a2e;">Recipient TZ</div>
+          <div style="font-size: 12px; color: #64748b;">Fallback: Eastern (UTC−4)</div>
+        </div>
+      </div>
+
+      <!-- Platform limitation note -->
+      <div style="background: #fffbeb; border: 1px solid #fcd34d; border-left: 4px solid #f59e0b; border-radius: 10px; padding: 14px 18px;">
+        <div style="font-size: 13px; font-weight: 700; color: #92400e; margin-bottom: 4px;">⚠️ Platform Note — Monday &amp; Friday Volume</div>
+        <div style="font-size: 13px; color: #78350f; line-height: 1.6;">
+          The strategy called for <strong>half-volume on Mondays and Fridays</strong>. However, when using Lemlist's <em>timezone-based scheduling</em> (required to send in each prospect's local time), the platform does not allow setting different sending quotas per day of the week. As a result, <strong>Monday and Friday are set to the same volume as Tuesday–Thursday</strong>. This is a platform constraint, not a configuration oversight.
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Reference ── -->
+  <div class="section">
+    <div class="section-title">Reference</div>
+    <div class="card" style="padding:20px 24px;">
+      <div style="font-size:14px; color:#475569; line-height:1.8;">
+        Full strategy document:
+        <a href="https://kasandzz.github.io/kamg-client-reports/redstone/cold-email-strategy-2026-04-29.html"
+           style="color:#e94560; font-weight:600; text-decoration:none;">
+          Redstone Cold Email Strategy — April 29, 2026
+        </a>
+        <br/>
+        Platform: <strong>Lemlist</strong> · Email provider: <strong>Google Workspace</strong> · Lead source: <strong>Apollo (verified-only)</strong>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /content -->
+
+<div class="footer">
+  Prepared by <strong>KAMG</strong> · May 7, 2026 · For internal use and client review only
+</div>
+
+</body>
+</html>
