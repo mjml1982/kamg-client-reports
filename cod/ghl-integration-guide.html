@@ -122,6 +122,30 @@
     .native { color: #34d399; font-size: 12px; font-weight: 600; }
     .custom { color: #a78bfa; font-size: 12px; font-weight: 600; }
 
+    /* Why section */
+    .why-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin: 20px 0;
+    }
+    .why-card {
+      background: #0f1117;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 20px 18px;
+    }
+    .why-card .icon { font-size: 24px; margin-bottom: 10px; }
+    .why-card h4 { font-size: 14px; font-weight: 600; color: #f1f5f9; margin-bottom: 6px; }
+    .why-card p  { font-size: 13px; color: #64748b; line-height: 1.5; margin: 0; }
+
+    /* Comparison table */
+    .compare-table { font-size: 13px; }
+    .compare-table thead th:first-child { width: 38%; }
+    .tick   { color: #34d399; font-weight: 700; }
+    .cross  { color: #f87171; font-weight: 700; }
+    .partial{ color: #fbbf24; font-weight: 700; }
+
     /* Code block */
     pre {
       background: #0a0e18;
@@ -191,6 +215,104 @@
     <h1>COD Application Form<br>→ GoHighLevel Integration</h1>
     <p class="subtitle">How to embed the custom form in a GHL HTML widget and map every field to a GHL contact record.</p>
   </div>
+
+  <!-- Why This Method -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num" style="background: linear-gradient(135deg,#0ea5e9,#6366f1);">★</div>
+      <div class="step-title">Why This Method?</div>
+    </div>
+    <p>There are three common ways to get form data into GHL. Here's why <strong>Custom HTML Widget + Webhook</strong> is the right choice for this form.</p>
+
+    <!-- Comparison table -->
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th>Approach</th>
+          <th>Keeps Custom Design</th>
+          <th>No API Key Exposed</th>
+          <th>Multi-Step Support</th>
+          <th>No Extra Cost</th>
+          <th>Full Automation</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>✦ Custom HTML + Webhook</strong><br><span style="color:#64748b;font-size:12px;">This guide</span></td>
+          <td><span class="tick">✔ Yes</span></td>
+          <td><span class="tick">✔ Yes</span></td>
+          <td><span class="tick">✔ Yes</span></td>
+          <td><span class="tick">✔ Yes</span></td>
+          <td><span class="tick">✔ Yes</span></td>
+        </tr>
+        <tr>
+          <td><strong>GHL Native Form Builder</strong><br><span style="color:#64748b;font-size:12px;">Rebuild in GHL</span></td>
+          <td><span class="cross">✘ No</span></td>
+          <td><span class="tick">✔ Yes</span></td>
+          <td><span class="cross">✘ No</span></td>
+          <td><span class="tick">✔ Yes</span></td>
+          <td><span class="tick">✔ Yes</span></td>
+        </tr>
+        <tr>
+          <td><strong>GHL API from Frontend</strong><br><span style="color:#64748b;font-size:12px;">Direct API calls in JS</span></td>
+          <td><span class="tick">✔ Yes</span></td>
+          <td><span class="cross">✘ No</span></td>
+          <td><span class="tick">✔ Yes</span></td>
+          <td><span class="tick">✔ Yes</span></td>
+          <td><span class="partial">~ Partial</span></td>
+        </tr>
+        <tr>
+          <td><strong>Third-Party Form Tool</strong><br><span style="color:#64748b;font-size:12px;">Typeform / Jotform + Zapier</span></td>
+          <td><span class="partial">~ Partial</span></td>
+          <td><span class="tick">✔ Yes</span></td>
+          <td><span class="tick">✔ Yes</span></td>
+          <td><span class="cross">✘ Extra cost</span></td>
+          <td><span class="partial">~ Via Zapier</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Benefit cards -->
+    <div class="why-grid" style="margin-top:28px;">
+      <div class="why-card">
+        <div class="icon">🎨</div>
+        <h4>Design stays 100% intact</h4>
+        <p>GHL's native form builder can't replicate multi-step logic, custom animations, or conditional radio flows. This approach embeds the exact HTML as-is.</p>
+      </div>
+      <div class="why-card">
+        <div class="icon">🔒</div>
+        <h4>No security risk</h4>
+        <p>Calling the GHL API directly from the browser would expose your private API key in public HTML. The webhook URL is safe — it only accepts POST data, it can't read anything.</p>
+      </div>
+      <div class="why-card">
+        <div class="icon">⚙️</div>
+        <h4>Full workflow automation</h4>
+        <p>The GHL Workflow receives the data and can instantly tag the contact, assign to a pipeline, send a confirmation email, notify your team, and more — all in one trigger.</p>
+      </div>
+      <div class="why-card">
+        <div class="icon">💸</div>
+        <h4>Zero extra tools or cost</h4>
+        <p>No Zapier, no Typeform subscription, no third-party middleware. Everything runs inside GHL using features you already have.</p>
+      </div>
+      <div class="why-card">
+        <div class="icon">🌐</div>
+        <h4>No backend needed</h4>
+        <p>GHL webhooks accept cross-origin requests, so the form submits directly from the visitor's browser — no server, no proxy, no extra hosting.</p>
+      </div>
+      <div class="why-card">
+        <div class="icon">🔄</div>
+        <h4>Create or update contacts</h4>
+        <p>GHL's "Create/Update Contact" action deduplicates by email — if the person already exists in your CRM, it updates their record instead of creating a duplicate.</p>
+      </div>
+    </div>
+
+    <div class="callout good" style="margin-top:20px;">
+      <span class="callout-icon">✓</span>
+      <span><strong>Bottom line:</strong> you keep the polished multi-step form experience you've already built, every answer lands on the contact record in GHL, and the whole setup lives inside tools you're already paying for.</span>
+    </div>
+  </div>
+
+  <div class="divider">↓</div>
 
   <!-- Step 1 -->
   <div class="step">
